@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Besoins de Recrutement IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .region-tab.active {
+            border-bottom: 3px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <i class="fas fa-users-cog text-blue-500 mr-2"></i>
+                    Gestion des Besoins IT
+                </h1>
+                <button id="exportBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-file-export mr-2"></i>
+                    Exporter vers GitHub
+                </button>
+            </div>
+            <p class="text-gray-600 mt-2">Gérez et suivez vos besoins de recrutement pour les régions Ouest et Centre</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!-- Region Tabs -->
+            <div class="border-b border-gray-200">
+                <nav class="flex -mb-px">
+                    <button id="allTab" class="region-tab active py-4 px-6 text-center border-b-2 font-medium text-sm">
+                        <i class="fas fa-globe mr-2"></i>Tous les besoins
+                    </button>
+                    <button id="westTab" class="region-tab py-4 px-6 text-center border-b-2 font-medium text-sm">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Région Ouest
+                    </button>
+                    <button id="centerTab" class="region-tab py-4 px-6 text-center border-b-2 font-medium text-sm">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Région Centre
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6">
+                <!-- Add New Position Form -->
+                <div class="mb-8 bg-blue-50 p-4 rounded-lg fade-in">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-plus-circle text-blue-500 mr-2"></i>
+                        Ajouter un nouveau besoin
+                    </h2>
+                    <form id="positionForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="jobTitle" class="block text-sm font-medium text-gray-700 mb-1">Intitulé du poste</label>
+                            <input type="text" id="jobTitle" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="region" class="block text-sm font-medium text-gray-700 mb-1">Région</label>
+                            <select id="region" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionner une région</option>
+                                <option value="Ouest">Ouest</option>
+                                <option value="Centre">Centre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="contractType" class="block text-sm font-medium text-gray-700 mb-1">Type de contrat</label>
+                            <select id="contractType" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionner un type</option>
+                                <option value="CDI">CDI</option>
+                                <option value="CDD">CDD</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Interim">Intérim</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="experience" class="block text-sm font-medium text-gray-700 mb-1">Expérience requise</label>
+                            <select id="experience" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Sélectionner</option>
+                                <option value="Débutant">Débutant (0-2 ans)</option>
+                                <option value="Intermédiaire">Intermédiaire (2-5 ans)</option>
+                                <option value="Confirmé">Confirmé (5-10 ans)</option>
+                                <option value="Expert">Expert (+10 ans)</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="jobDescription" class="block text-sm font-medium text-gray-700 mb-1">Description du poste</label>
+                            <textarea id="jobDescription" rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="skills" class="block text-sm font-medium text-gray-700 mb-1">Compétences techniques</label>
+                            <textarea id="skills" rows="2" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Séparez les compétences par des virgules (ex: Java, React, SQL...)"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex justify-end">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center">
+                                <i class="fas fa-save mr-2"></i>
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Positions List -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-list-ul text-blue-500 mr-2"></i>
+                        Liste des besoins
+                    </h2>
+                    
+                    <!-- Filter and Search -->
+                    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="relative w-full md:w-64">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" id="searchInput" placeholder="Rechercher un poste..." class="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <label for="statusFilter" class="text-sm text-gray-700">Statut :</label>
+                            <select id="statusFilter" class="px-3 py-1 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="all">Tous</option>
+                                <option value="active">Actif</option>
+                                <option value="inactive">Inactif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Positions Grid -->
+                    <div id="positionsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Positions will be added here dynamically -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-12 hidden">
+                        <i class="fas fa-folder-open text-gray-300 text-5xl mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900">Aucun besoin enregistré</h3>
+                        <p class="mt-1 text-sm text-gray-500">Commencez par ajouter un nouveau besoin de recrutement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Announcement Modal -->
+        <div id="announcementModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-file-alt text-blue-500 mr-2"></i>
+                        Annonce de recrutement
+                    </h3>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto flex-grow">
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-medium text-gray-900">Prévisualisation de l'annonce</h4>
+                            <button id="copyAnnouncement" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm flex items-center">
+                                <i class="fas fa-copy mr-2"></i>
+                                Copier
+                            </button>
+                        </div>
+                        <div id="announcementPreview" class="bg-gray-50 p-4 rounded border border-gray-200 whitespace-pre-line"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-4">Personnaliser l'annonce</h4>
+                        <textarea id="customAnnouncement" rows="10" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+                    <button id="sendToAgency" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Envoyer aux agences
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let positions = [
+            {
+                id: 1,
+                jobTitle: "Développeur Full Stack",
+                region: "Ouest",
+                contractType: "CDI",
+                experience: "Intermédiaire",
+                description: "Nous recherchons un développeur Full Stack pour rejoindre notre équipe technique. Vous serez en charge du développement et de la maintenance de nos applications web.",
+                skills: ["JavaScript", "React", "Node.js", "MongoDB"],
+                status: "active",
+                createdAt: new Date('2023-05-15')
+            },
+            {
+                id: 2,
+                jobTitle: "Data Analyst",
+                region: "Centre",
+                contractType: "CDD",
+                experience: "Confirmé",
+                description: "Poste de Data Analyst pour analyser les données clients et produire des rapports d'analyse pour la direction.",
+                skills: ["Python", "SQL", "Tableau", "Power BI"],
+                status: "active",
+                createdAt: new Date('2023-06-20')
+            },
+            {
+                id: 3,
+                jobTitle: "DevOps Engineer",
+                region: "Ouest",
+                contractType: "CDI",
+                experience: "Expert",
+                description: "Nous cherchons un ingénieur DevOps pour améliorer notre infrastructure et nos processus de déploiement.",
+                skills: ["AWS", "Docker", "Kubernetes", "CI/CD"],
+                status: "inactive",
+                createdAt: new Date('2023-04-10')
+            }
+        ];
+
+        // DOM Elements
+        const positionForm = document.getElementById('positionForm');
+        const positionsContainer = document.getElementById('positionsContainer');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const regionTabs = document.querySelectorAll('.region-tab');
+        const announcementModal = document.getElementById('announcementModal');
+        const closeModal = document.getElementById('closeModal');
+        const copyAnnouncement = document.getElementById('copyAnnouncement');
+        const announcementPreview = document.getElementById('announcementPreview');
+        const customAnnouncement = document.getElementById('customAnnouncement');
+        const sendToAgency = document.getElementById('sendToAgency');
+        const exportBtn = document.getElementById('exportBtn');
+
+        // Current filter state
+        let currentRegionFilter = 'all';
+        let currentStatusFilter = 'all';
+        let currentSearchQuery = '';
+
+        // Initialize the app
+        function init() {
+            renderPositions();
+            setupEventListeners();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Form submission
+            positionForm.addEventListener('submit', handleFormSubmit);
+            
+            // Search and filter
+            searchInput.addEventListener('input', (e) => {
+                currentSearchQuery = e.target.value.toLowerCase();
+                renderPositions();
+            });
+            
+            statusFilter.addEventListener('change', (e) => {
+                currentStatusFilter = e.target.value;
+                renderPositions();
+            });
+            
+            // Region tabs
+            regionTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    regionTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    if (tab.id === 'allTab') currentRegionFilter = 'all';
+                    else if (tab.id === 'westTab') currentRegionFilter = 'Ouest';
+                    else if (tab.id === 'centerTab') currentRegionFilter = 'Centre';
+                    
+                    renderPositions();
+                });
+            });
+            
+            // Modal
+            closeModal.addEventListener('click', () => {
+                announcementModal.classList.add('hidden');
+            });
+            
+            copyAnnouncement.addEventListener('click', copyToClipboard);
+            sendToAgency.addEventListener('click', sendAnnouncement);
+            exportBtn.addEventListener('click', exportToGitHub);
+        }
+
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const newPosition = {
+                id: positions.length > 0 ? Math.max(...positions.map(p => p.id)) + 1 : 1,
+                jobTitle: document.getElementById('jobTitle').value,
+                region: document.getElementById('region').value,
+                contractType: document.getElementById('contractType').value,
+                experience: document.getElementById('experience').value,
+                description: document.getElementById('jobDescription').value,
+                skills: document.getElementById('skills').value.split(',').map(skill => skill.trim()),
+                status: "active",
+                createdAt: new Date()
+            };
+            
+            positions.unshift(newPosition);
+            renderPositions();
+            positionForm.reset();
+            
+            // Scroll to the new position
+            setTimeout(() => {
+                const newPositionElement = document.getElementById(`position-${newPosition.id}`);
+                if (newPositionElement) {
+                    newPositionElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    newPositionElement.classList.add('bg-blue-50');
+                    setTimeout(() => {
+                        newPositionElement.classList.remove('bg-blue-50');
+                    }, 2000);
+                }
+            }, 100);
+        }
+
+        // Render positions based on filters
+        function renderPositions() {
+            let filteredPositions = [...positions];
+            
+            // Apply region filter
+            if (currentRegionFilter !== 'all') {
+                filteredPositions = filteredPositions.filter(position => position.region === currentRegionFilter);
+            }
+            
+            // Apply status filter
+            if (currentStatusFilter !== 'all') {
+                filteredPositions = filteredPositions.filter(position => position.status === currentStatusFilter);
+            }
+            
+            // Apply search query
+            if (currentSearchQuery) {
+                filteredPositions = filteredPositions.filter(position => 
+                    position.jobTitle.toLowerCase().includes(currentSearchQuery) ||
+                    position.description.toLowerCase().includes(currentSearchQuery) ||
+                    position.skills.some(skill => skill.toLowerCase().includes(currentSearchQuery))
+                );
+            }
+            
+            // Clear container
+            positionsContainer.innerHTML = '';
+            
+            // Show empty state if no positions
+            if (filteredPositions.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+            
+            // Render positions
+            filteredPositions.forEach(position => {
+                const positionElement = document.createElement('div');
+                positionElement.id = `position-${position.id}`;
+                positionElement.className = 'bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover';
+                
+                positionElement.innerHTML = `
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-semibold text-gray-900">${position.jobTitle}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                position.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                            }">
+                                ${position.status === 'active' ? 'Actif' : 'Inactif'}
+                            </span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span class="flex items-center mr-3">
+                                <i class="fas fa-map-marker-alt mr-1 text-blue-500"></i>
+                                ${position.region}
+                            </span>
+                            <span class="flex items-center mr-3">
+                                <i class="fas fa-file-contract mr-1 text-blue-500"></i>
+                                ${position.contractType}
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-user-tie mr-1 text-blue-500"></i>
+                                ${position.experience}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${position.description}</p>
+                        <div class="mb-4">
+                            <h4 class="text-sm font-medium text-gray-700 mb-1">Compétences requises:</h4>
+                            <div class="flex flex-wrap gap-1">
+                                ${position.skills.map(skill => `
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                        ${skill}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-gray-500">
+                            <span>Ajouté le ${formatDate(position.createdAt)}</span>
+                            <div class="flex space-x-2">
+                                <button class="edit-btn px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200" data-id="${position.id}">
+                                    <i class="fas fa-edit mr-1"></i>Modifier
+                                </button>
+                                <button class="generate-btn px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200" data-id="${position.id}">
+                                    <i class="fas fa-file-alt mr-1"></i>Annonce
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                positionsContainer.appendChild(positionElement);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('.generate-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const positionId = parseInt(e.currentTarget.getAttribute('data-id'));
+                    generateAnnouncement(positionId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const positionId = parseInt(e.currentTarget.getAttribute('data-id'));
+                    editPosition(positionId);
+                });
+            });
+        }
+
+        // Format date
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Generate announcement
+        function generateAnnouncement(positionId) {
+            const position = positions.find(p => p.id === positionId);
+            if (!position) return;
+            
+            const announcement = `
+                **${position.jobTitle} - ${position.region} (${position.contractType})**
+
+                Nous recherchons pour notre client un(e) ${position.jobTitle} ${position.experience.toLowerCase()} pour rejoindre une équipe dynamique.
+
+                **Mission:**
+                ${position.description}
+
+                **Profil recherché:**
+                - ${position.experience} en ${position.jobTitle.split(' ')[0]}
+                - Compétences techniques: ${position.skills.join(', ')}
+                - Capacité à travailler en équipe
+                - Bonnes compétences communicationnelles
+
+                **Conditions:**
+                - Contrat: ${position.contractType}
+                - Localisation: Région ${position.region}
+                - Rémunération attractive selon profil
+
+                Merci d'envoyer CV détaillé à recrutement@agence.com avec référence "${position.jobTitle.substring(0, 3).toUpperCase()}${position.id}".
+            `;
+            
+            announcementPreview.textContent = announcement;
+            customAnnouncement.value = announcement;
+            announcementModal.classList.remove('hidden');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            navigator.clipboard.writeText(customAnnouncement.value).then(() => {
+                const originalText = copyAnnouncement.innerHTML;
+                copyAnnouncement.innerHTML = '<i class="fas fa-check mr-2"></i>Copié!';
+                setTimeout(() => {
+                    copyAnnouncement.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // Send announcement
+        function sendAnnouncement() {
+            // In a real app, this would send the announcement to agencies
+            alert('Annonce envoyée aux agences avec succès!');
+            announcementModal.classList.add('hidden');
+        }
+
+        // Edit position
+        function editPosition(positionId) {
+            const position = positions.find(p => p.id === positionId);
+            if (!position) return;
+            
+            // Scroll to form
+            positionForm.scrollIntoView({ behavior: 'smooth' });
+            
+            // Fill form with position data
+            document.getElementById('jobTitle').value = position.jobTitle;
+            document.getElementById('region').value = position.region;
+            document.getElementById('contractType').value = position.contractType;
+            document.getElementById('experience').value = position.experience;
+            document.getElementById('jobDescription').value = position.description;
+            document.getElementById('skills').value = position.skills.join(', ');
+            
+            // Remove the position from the array
+            positions = positions.filter(p => p.id !== positionId);
+            
+            // Update the positions display
+            renderPositions();
+        }
+
+        // Export to GitHub
+        function exportToGitHub() {
+            // In a real app, this would export data to GitHub
+            const dataToExport = {
+                positions: positions,
+                exportedAt: new Date().toISOString()
+            };
+            
+            console.log('Data to export:', dataToExport);
+            alert('Données exportées vers GitHub avec succès! (voir la console pour les données)');
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
